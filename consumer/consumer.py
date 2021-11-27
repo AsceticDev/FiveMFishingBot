@@ -30,14 +30,16 @@ def isMenuOpen():
         return False
         
 
-def useFishingRod(theCls):
-    if theCls.theThread:
-        theCls.setBusy(theCls)
-        theCls.cancel(theCls)
+def useFishingRod(insCls):
+    try:
+        insCls.setBusy()
+    except:
+        pass
+    if insCls:
+        insCls.cancel()
     focusWindow(win)
     time.sleep(2)
     
-
     if not isMenuOpen():
         winSendKey(openInvKey)
         time.sleep(2)
@@ -64,8 +66,12 @@ def useFishingRod(theCls):
             consume(squareObjects[i].itemLoc)
             time.sleep(1)
 
+    if isMenuOpen():
+        winSendKey(openInvKey)
+        time.sleep(2)
+
     try:
-        theCls.setNotBusy(theCls)
+        insCls.setNotBusy()
     except:
         pass
 
@@ -113,65 +119,61 @@ def screenFunc(aList, squareObj = {}):
     return squareObj.textBoxContent
 
 
-def startConsumer(singleThread):
-    if singleThread:
-        singleThread.setBusy()
-        singleThread.cancel()
+def startConsumer(insCls):
+    insCls.setBusy()
+    insCls.cancel()
+    print('consumer started')
     time.sleep(1)
     focusWindow(win)
     time.sleep(1)
     #Check that menu is open
+    print('about to check if menu open')
     if not isMenuOpen():
+        print('inside check, menu is not open')
         focusWindow(win)
         time.sleep(1)
         winSendKey(openInvKey)
-    else:
-        time.sleep(1)
-        pyautogui.click(startScrollLoc)
-        time.sleep(1)
+    time.sleep(1)
+    pyautogui.click(startScrollLoc)
+    time.sleep(1)
 
-        print('so we check if hungry and thirsty')
+    print('so we check if hungry and thirsty')
 
-        consumables = Consumables()
-        squareObjects = [Square() for i in range(len(textBoxRegions))]
-        for i in range(len(textBoxRegions)):
-            squareObjects[i].textBoxRegion = textBoxRegions[i]
-            squareObjects[i].itemLoc = [(textBoxRegions[i][0] + 57), (textBoxRegions[i][1] - 20)]
-            tbr = squareObjects[i].textBoxRegion
-            loopText = screenFunc(tbr, squareObjects[i])
+    consumables = Consumables()
+    squareObjects = [Square() for i in range(len(textBoxRegions))]
+    for i in range(len(textBoxRegions)):
+        squareObjects[i].textBoxRegion = textBoxRegions[i]
+        squareObjects[i].itemLoc = [(textBoxRegions[i][0] + 57), (textBoxRegions[i][1] - 20)]
+        tbr = squareObjects[i].textBoxRegion
+        loopText = screenFunc(tbr, squareObjects[i])
 
-        isHungry = pixelChecker(eatPixel, eatPixelRGBMenu)
-        isThirsty = pixelChecker(drinkPixel, drinkPixelRGBMenu)
+    isHungry = pixelChecker(eatPixel, eatPixelRGBMenu)
+    isThirsty = pixelChecker(drinkPixel, drinkPixelRGBMenu)
 
-        if isHungry:
-            print('we hungry')
-            for i in range(len(squareObjects)):
-                for item in consumables.foodList:
-                    if item in squareObjects[i].textBoxContent:
-                        print(f'Match!!! : {item}')
-                        isHungry = pixelChecker(eatPixel, eatPixelRGB)
-                        print(isHungry)
-                        if isHungry:
-                            print('we\'re eating right now')
-                            consume(squareObjects[i].itemLoc)
+    if isHungry:
+        print('we hungry')
+        for i in range(len(squareObjects)):
+            for item in consumables.foodList:
+                if item in squareObjects[i].textBoxContent:
+                    print(f'Match!!! : {item}')
+                    isHungry = pixelChecker(eatPixel, eatPixelRGB)
+                    print(isHungry)
+                    if isHungry:
+                        print('we\'re eating right now')
+                        consume(squareObjects[i].itemLoc)
 
-        elif isThirsty:
-            print('we thirsty')
-            for i in range(len(squareObjects)):
-                for item in consumables.drinkList:
-                    if item in squareObjects[i].textBoxContent:
-                        isThirsty = pixelChecker(drinkPixel, drinkPixelRGB)
-                        if isThirsty:
-                            print('we\'re drinking right now')
-                            consume(squareObjects[i].itemLoc)
-
+    elif isThirsty:
+        print('we thirsty')
+        for i in range(len(squareObjects)):
+            for item in consumables.drinkList:
+                if item in squareObjects[i].textBoxContent:
+                    isThirsty = pixelChecker(drinkPixel, drinkPixelRGB)
+                    if isThirsty:
+                        print('we\'re drinking right now')
+                        consume(squareObjects[i].itemLoc)
 
 
-        if isMenuOpen():
-            winSendKey(openInvKey)
-            pyautogui.sleep(1)
 
-        try:
-            singleThread.setNotBusy()
-        except:
-            pass
+    if isMenuOpen():
+        winSendKey(openInvKey)
+        pyautogui.sleep(1)

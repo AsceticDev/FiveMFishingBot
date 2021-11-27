@@ -18,39 +18,61 @@ class ThreadTimer():
             with cls._lock:
                 if not cls._instance:
                     cls.isBusy = False
-                    cls.theThread = Timer(5,useFishingRod, [cls])
+                    cls.theThread = {}
                     cls._instance = super(ThreadTimer, cls).__new__(cls)
         return cls._instance
 
-    def rodUsage(cls):
-        cls.setBusy(cls)
-        useFishingRod()
-        cls.setNotBusy(cls)
-
     def setBusy(cls):
-        cls.isBusy = True
+        if cls:
+            cls.isBusy = True
+            print('thread set busy')
+        else:
+            print('no cls to use')
 
     def setNotBusy(cls):
-        cls.isBusy = False
+        if cls:
+            cls.isBusy = False
+            print('thread set not busy')
+        else:
+            print('no cls to use')
 
     def start(cls):
-        cls.theThread.start()
+        if cls.theThread:
+            try:
+                cls.theThread.start()
+            except:
+                pass
+        else:
+            try:
+                cls.theThread = Timer(7,useFishingRod,[cls])
+                cls.theThread.start()
+            except:
+                print('issue making timer')
 
     def cancel(cls):
-        cls.theThread.cancel()
-
-t = ThreadTimer()
+        if cls:
+            if cls.theThread:
+                cls.theThread.cancel()
+        else:
+            print('no class to use')
 
 def afkMode(window, letter, afkVar):
     if afkVar == True:
-        hungerStatus = pixelChecker(eatPixel, eatPixelRGB)
-        thirstStatus = pixelChecker(drinkPixel, drinkPixelRGB)
-        if hungerStatus or thirstStatus:
-            winops.focusWindow(window)
-            startConsumer(t)
-            sleep(1)
-        winops.focusWindow(window)
-        winops.sendkey(window, letter)
+        t = ThreadTimer()
+        if not t.isBusy:
+            hungerStatus = pixelChecker(eatPixel, eatPixelRGB)
+            thirstStatus = pixelChecker(drinkPixel, drinkPixelRGB)
+            if hungerStatus or thirstStatus:
+                print('inside hunger/thirst checker in afk checker')
+                winops.focusWindow(window)
+                startConsumer(t)
+                tt = ThreadTimer()
+                tt.setNotBusy()
+                print('set not busy')
+                sleep(1)
+            else:
+                winops.focusWindow(window)
+                winops.sendkey(window, letter)
     else:
         winops.sendkey(window, letter)
 
@@ -58,22 +80,22 @@ def afkMode(window, letter, afkVar):
 def startFishing(winVar, afkVar):
     if afkVar:
         winops.focusWindow(winVar)
+        print('bewm')
+        t = ThreadTimer()
+        print(t)
+        print(t.isBusy)
         if not t.isBusy:
             try:
                 t.start()
             except:
                 pass
-        else:
-            try:
-                t.cancel()
-            except:
-                pass
 
     mainBarPixelColorGreen = (60,150,60)
     mainBarPixel = pyautogui.pixel(950, 107)
-    if  mainBarPixel == mainBarPixelColorGreen:
+    if mainBarPixel == mainBarPixelColorGreen:
         if afkVar:
             if t:
+                print('cancelling thread')
                 t.cancel() 
         gPixel1 = pyautogui.pixel(900, 147)
         gColor1 = (114, 204, 114)
