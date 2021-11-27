@@ -1,3 +1,4 @@
+from consumer.consumer import startConsumer, useFishingRod
 from menu import menu
 from fisher.fisher import startFishing
 from pywinauto.application import Application

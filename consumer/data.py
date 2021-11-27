@@ -1,13 +1,16 @@
-openInvKey = 'F2'
-fishingRodText = 'FISHING ROD'
+openInvKey = '{F2}'
+fishingRodText = 'FISHINGROD'
 
+startScrollLoc = [805, 243]
 useButtonLoc = [960, 545]
-UseButtomRegion = [930, 530, 60, 30] #x y w h
+UseButtonRegion = [885, 525, 150, 41] #x y w h
 
 drinkPixel = [220, 1056]
-drinkPixelRGB = [1, 98, 130]
+drinkPixelRGB = [1, 164, 216]
+drinkPixelRGBMenu = [1, 110, 139]
 eatPixel = [208, 1056]
-eatPixelRGB = [115 , 126, 1]
+eatPixelRGB = [196 , 216, 1]
+eatPixelRGBMenu = [114 , 126, 1]
 
 
 
