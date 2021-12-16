@@ -1,4 +1,4 @@
-from time import sleep
+from time import sleep, time
 from winops import winops
 import pyautogui
 from threading import Timer
@@ -11,15 +11,15 @@ hungerStatus = False
 thirstStatus = False
 class ThreadTimer():
     _instance = None
-    _lock = threading.Lock() 
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
-            with cls._lock:
-                if not cls._instance:
-                    cls.isBusy = False
-                    cls.theThread = {}
-                    cls._instance = super(ThreadTimer, cls).__new__(cls)
+            if not cls._instance:
+                cls.isBusy = False
+                cls.theThread = {}
+                cls.starter = 0
+                cls.ender = 0
+                cls._instance = super(ThreadTimer, cls).__new__(cls)
         return cls._instance
 
     def setBusy(cls):
@@ -37,24 +37,28 @@ class ThreadTimer():
             print('no cls to use')
 
     def start(cls):
-        if cls.theThread:
-            try:
-                cls.theThread.start()
-            except:
-                pass
-        else:
-            try:
-                cls.theThread = Timer(7,useFishingRod,[cls])
-                cls.theThread.start()
-            except:
-                print('issue making timer')
-
-    def cancel(cls):
         if cls:
-            if cls.theThread:
-                cls.theThread.cancel()
+            try:
+                cls.starter.time()
+            except:
+                print('couldnt start time')
         else:
             print('no class to use')
+    
+    def cancel(cls):
+        if cls:
+            cls.ender = 0
+            cls.starter = 0
+        else:
+            print('no class to use')
+
+    def timeElapsed(cls):
+        if cls:
+            cls.ender.time()
+            time_elapsed = cls.ender - cls.starter
+            return time_elapsed
+        else:
+            print('no class instance')
 
 def afkMode(window, letter, afkVar):
     if afkVar == True:
@@ -85,17 +89,20 @@ def startFishing(winVar, afkVar):
         print(t)
         print(t.isBusy)
         if not t.isBusy:
-            try:
-                t.start()
-            except:
-                pass
+            if t.starter == 0:
+                try:
+                    t.start()
+                except:
+                    pass
+            else:
+                print('timer isn\'t 0! WTF')
 
     mainBarPixelColorGreen = (60,150,60)
     mainBarPixel = pyautogui.pixel(950, 107)
     if mainBarPixel == mainBarPixelColorGreen:
         if afkVar:
             if t:
-                print('cancelling thread')
+                print('cancelling timer!')
                 t.cancel() 
         gPixel1 = pyautogui.pixel(900, 147)
         gColor1 = (114, 204, 114)
