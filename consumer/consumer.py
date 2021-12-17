@@ -121,7 +121,7 @@ def screenFunc(aList, squareObj = {}):
 
 def startConsumer(insCls):
     insCls.setBusy()
-    insCls.cancel()
+    # insCls.cancel()
     print('consumer started')
     time.sleep(1)
     focusWindow(win)

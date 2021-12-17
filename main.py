@@ -5,7 +5,10 @@ from pywinauto.application import Application
 import keyboard
 
 app = Application().connect(title_re="FiveM")
-win = app.window(title_re = "FiveM")
+try:
+    win = app.window(title_re = "FiveM")
+except:
+    print('Unable to find window FiveM')
 setafk = False
 hungerStatus = False
 thirstStatus = False

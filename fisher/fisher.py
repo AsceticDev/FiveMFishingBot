@@ -1,10 +1,7 @@
 from time import sleep, time
 from winops import winops
 import pyautogui
-from threading import Timer
-import threading
-from consumer.data import openInvKey
-from consumer.consumer import startConsumer, pixelChecker, eatPixel, eatPixelRGB, drinkPixel, drinkPixelRGB, useFishingRod, winSendKey, isMenuOpen
+from consumer.consumer import startConsumer, pixelChecker, eatPixel, eatPixelRGB, drinkPixel, drinkPixelRGB, useFishingRod
 
 
 hungerStatus = False
@@ -25,6 +22,7 @@ class ThreadTimer():
     def setBusy(cls):
         if cls:
             cls.isBusy = True
+            cls.cancel()
             print('thread set busy')
         else:
             print('no cls to use')
@@ -39,7 +37,7 @@ class ThreadTimer():
     def start(cls):
         if cls:
             try:
-                cls.starter.time()
+                cls.starter = time()
             except:
                 print('couldnt start time')
         else:
@@ -54,7 +52,7 @@ class ThreadTimer():
 
     def timeElapsed(cls):
         if cls:
-            cls.ender.time()
+            cls.ender = time()
             time_elapsed = cls.ender - cls.starter
             return time_elapsed
         else:
@@ -84,18 +82,16 @@ def afkMode(window, letter, afkVar):
 def startFishing(winVar, afkVar):
     if afkVar:
         winops.focusWindow(winVar)
-        print('bewm')
         t = ThreadTimer()
-        print(t)
-        print(t.isBusy)
         if not t.isBusy:
+            timeElapsed = t.timeElapsed()
+            if timeElapsed > 8.0:
+                useFishingRod()
             if t.starter == 0:
                 try:
                     t.start()
                 except:
                     pass
-            else:
-                print('timer isn\'t 0! WTF')
 
     mainBarPixelColorGreen = (60,150,60)
     mainBarPixel = pyautogui.pixel(950, 107)
