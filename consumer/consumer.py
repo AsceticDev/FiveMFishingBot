@@ -69,6 +69,7 @@ def useFishingRod(insCls):
     if isMenuOpen():
         winSendKey(openInvKey)
         time.sleep(2)
+        time.sleep(1)
 
     try:
         insCls.setNotBusy()
